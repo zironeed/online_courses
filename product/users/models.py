@@ -32,6 +32,16 @@ class CustomUser(AbstractUser):
 class Balance(models.Model):
     """Модель баланса пользователя."""
 
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='balance',
+        verbose_name='Пользователь'
+    )
+    balance = models.PositiveIntegerField(
+        default=1000,
+        verbose_name='Баланс'
+    )
 
     class Meta:
         verbose_name = 'Баланс'
