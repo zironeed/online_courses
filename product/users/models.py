@@ -59,17 +59,10 @@ class Subscription(models.Model):
         verbose_name='Пользователь'
     )
     course = models.ForeignKey(
-        "Course",
+        "courses.Course",
         on_delete=models.CASCADE,
         related_name='subscriptions',
         verbose_name='Курс'
-    )
-    start_date = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Дата начала подписки'
-    )
-    end_date = models.DateTimeField(
-        verbose_name='Дата окончания подписки'
     )
     is_active = models.BooleanField(
         default=True,
