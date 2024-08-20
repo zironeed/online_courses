@@ -3,15 +3,24 @@ from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
 from users.models import Subscription
+from users.models import Balance
 
 User = get_user_model()
 
+
+class BalanceSerializer(serializers.ModelSerializer):
+    """Баланс пользователя"""
+
+    class Meta:
+        model = Balance
+        fields = '__all__'
 
 class CustomUserSerializer(UserSerializer):
     """Сериализатор пользователей."""
 
     class Meta:
         model = User
+        fields = '__all__'
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -21,6 +30,4 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = (
-            # TODO
-        )
+        fields = '_all__'

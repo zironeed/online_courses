@@ -5,16 +5,7 @@ from rest_framework import serializers
 from courses.models import Course, Group, Lesson
 from users.models import Subscription
 
-from product.users.models import Balance
-
 User = get_user_model()
-
-class BalanceSerializer(serializers.ModelSerializer):
-    """Баланс пользователя"""
-
-    class Meta:
-        model = Balance
-        fields = '__all__'
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -62,6 +53,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
+        fields = '__all__'
 
 
 class CreateGroupSerializer(serializers.ModelSerializer):
@@ -131,3 +123,4 @@ class CreateCourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
+        fields = '__all__'
