@@ -17,7 +17,7 @@ class Course(models.Model):
         auto_now_add=False,
         verbose_name='Дата и время начала курса'
     )
-    cost = models.PositiveIntegerField(
+    price = models.PositiveIntegerField(
         default=0,
         verbose_name='Стоимость'
     )
@@ -61,7 +61,19 @@ class Lesson(models.Model):
 class Group(models.Model):
     """Модель группы."""
 
-    # TODO
+    title = models.CharField(
+        default='Группа',
+        max_length=250,
+        verbose_name='Название'
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='groups',
+        verbose_name='Курс',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = 'Группа'
