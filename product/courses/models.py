@@ -17,8 +17,10 @@ class Course(models.Model):
         auto_now_add=False,
         verbose_name='Дата и время начала курса'
     )
-
-    # TODO
+    cost = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Стоимость'
+    )
 
     class Meta:
         verbose_name = 'Курс'
