@@ -32,6 +32,16 @@ class CustomUser(AbstractUser):
 class Balance(models.Model):
     """Модель баланса пользователя."""
 
+
+    class Meta:
+        verbose_name = 'Баланс'
+        verbose_name_plural = 'Балансы'
+        ordering = ('-id',)
+
+
+class Subscription(models.Model):
+    """Модель подписки пользователя на курс."""
+
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -55,17 +65,6 @@ class Balance(models.Model):
         default=True,
         verbose_name='Активная подписка'
     )
-
-    class Meta:
-        verbose_name = 'Баланс'
-        verbose_name_plural = 'Балансы'
-        ordering = ('-id',)
-
-
-class Subscription(models.Model):
-    """Модель подписки пользователя на курс."""
-
-    # TODO
 
     class Meta:
         verbose_name = 'Подписка'
