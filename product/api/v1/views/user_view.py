@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, viewsets
 
-from product.custom_permissions import IsStaff
+from custom_permissions import IsStaff
 from api.v1.serializers.user_serializer import CustomUserSerializer, BalanceSerializer
-from product.users.models import Balance
+from users.models import Balance
 
 User = get_user_model()
 
