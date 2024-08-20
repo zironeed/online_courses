@@ -25,11 +25,36 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.get_full_name()
 
+    def has_access_to_course(self, course):
+        return self.subscriptions.filter(course=course, active=True).exists()
+
 
 class Balance(models.Model):
     """Модель баланса пользователя."""
 
-    # TODO
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+        verbose_name='Пользователь'
+    )
+    course = models.ForeignKey(
+        "Course",
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+        verbose_name='Курс'
+    )
+    start_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата начала подписки'
+    )
+    end_date = models.DateTimeField(
+        verbose_name='Дата окончания подписки'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активная подписка'
+    )
 
     class Meta:
         verbose_name = 'Баланс'
