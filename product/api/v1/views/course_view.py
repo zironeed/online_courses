@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, permissions
 from rest_framework.decorators import action
@@ -12,7 +13,7 @@ from api.v1.serializers.course_serializer import (CourseSerializer,
                                                   GroupSerializer,
                                                   LessonSerializer)
 from api.v1.serializers.user_serializer import SubscriptionSerializer
-from courses.models import Course
+from courses.models import Course, Group
 from users.models import Subscription
 
 
@@ -101,6 +102,13 @@ class CourseViewSet(viewsets.ModelViewSet):
                 user.balance.save()
 
                 Subscription.objects.create(user=user, course=course, is_active=True)
+
+            if course.groups.count() < 10:
+                for i in range(10 - course.groups.count()):
+                    Group.objects.create(course=course, title=f'Группа {i + 1}')
+
+            group = course.groups.annotate(student_count=Count('subscriptions__user')).order_by('student_count').first()
+            group.subsctiptions.add(user)
 
         except Exception:
             return Response(
