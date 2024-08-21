@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, permissions
 from rest_framework.decorators import action
@@ -56,13 +57,20 @@ class GroupViewSet(viewsets.ModelViewSet):
 class CourseViewSet(viewsets.ModelViewSet):
     """Курсы """
 
-    queryset = Course.objects.all()
     permission_classes = (ReadOnlyOrIsAdmin,)
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
             return CourseSerializer
         return CreateCourseSerializer
+
+    def get_queryset(self):
+        if self.action in ['list']:
+            return Course.objects.filter(
+                subscriptions__isnull=True,
+                subscriptions__user=self.request.user
+            ).distinct()
+        return Course.objects.all()
 
     @action(
         methods=['post'],
@@ -72,9 +80,35 @@ class CourseViewSet(viewsets.ModelViewSet):
     def pay(self, request, pk):
         """Покупка доступа к курсу (подписка на курс)."""
 
-        # TODO
+        course = self.get_object()
+        user = request.user
+
+        if user.subscriptions.filter(course=course, is_active=True).exists():
+            return Response(
+                data={'detail': 'У вас уже есть подписка на этот курс'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if user.balance.balance < course.price:
+            return Response(
+                data={'detail': 'У вас недостаточно бонусов'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            with transaction.atomic():
+                user.balance.balance -= course.price
+                user.balance.save()
+
+                Subscription.objects.create(user=user, course=course, is_active=True)
+
+        except Exception:
+            return Response(
+                data={'detail': 'Оплата не удалась'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         return Response(
-            data=data,
+            data={'detail': 'Подписка оформлена!'},
             status=status.HTTP_201_CREATED
         )
